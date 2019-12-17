@@ -1,13 +1,14 @@
-
+%% Load experiment file
 [file, path] = uigetfile('.mat','Select LED pattern data');
 
 phaseData = load([path file]);
-
 phaseData = phaseData.phaseData;
 
 if(size(phaseData(1).intensity,1) > 25)
-error('The number of phases exceeds 25. Arduino Micro does not have enough storage space')
+    error('The number of phases exceeds 25. Arduino Micro does not have enough storage space')
 end
+
+%% Flash experiment to optoPlate 
 fileID = fopen('../src/experiment_config.h','w');
 
 fprintf(fileID,'/* This is an auto generated file.\nFind the generator in ../Matlab/ExperimentGenerator.*/\n\n');
@@ -23,16 +24,16 @@ for i = (1:96)
     fprintf(fileID, '},\n');
 end
 fprintf(fileID, '};\n\n');
- 
- 
+
+
 fprintf(fileID, 'const uint8_t periods[][PHASE_NUMB] PROGMEM = {\n');
 for i = (1:96)
     fprintf(fileID, '\t{');
     fprintf(fileID, '%4i,',  phaseData(i).periods);
     fprintf(fileID, '},\n');
- end
- fprintf(fileID, '};\n\n');
- 
+end
+fprintf(fileID, '};\n\n');
+
 
 fprintf(fileID, 'const uint16_t offset[][PHASE_NUMB] PROGMEM = {\n');
 for i = (1:96)
@@ -41,32 +42,31 @@ for i = (1:96)
     fprintf(fileID, '},\n');
 end
 fprintf(fileID, '};\n');
- 
+
 fprintf(fileID, 'const uint16_t tInterpulse[][PHASE_NUMB] PROGMEM = {\n');
 for i = (1:96)
     fprintf(fileID, '\t{');
     fprintf(fileID, '%6i,',  phaseData(i).tInterpulse);
     fprintf(fileID, '},\n');
- end
- fprintf(fileID, '};\n');
- 
-  
-  fprintf(fileID, 'const uint16_t tPulse[][PHASE_NUMB] PROGMEM = {\n');
- 
- for i = (1:96)
+end
+fprintf(fileID, '};\n');
+
+
+fprintf(fileID, 'const uint16_t tPulse[][PHASE_NUMB] PROGMEM = {\n');
+
+for i = (1:96)
     fprintf(fileID, '\t{');
     fprintf(fileID, '%6i,',  phaseData(i).tPulse);
     fprintf(fileID, '},\n');
- end
- fprintf(fileID, '};\n');
-      
- fprintf(fileID,'#endif\n');
-  
- fclose(fileID);
- 
- status = system('cd ../ & platformio run --target upload');
- 
- 
- 
- 
- 
+end
+fprintf(fileID, '};\n');
+
+fprintf(fileID,'#endif\n');
+
+fclose(fileID);
+
+status = system('cd ../ & platformio run --target upload');
+
+
+
+

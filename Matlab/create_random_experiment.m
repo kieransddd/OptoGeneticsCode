@@ -1,5 +1,6 @@
 led.intensity = 0;
 led.duration = 0;
+
 phaseData = repmat(led,1,96);
 
 
