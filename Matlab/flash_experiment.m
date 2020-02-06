@@ -1,3 +1,4 @@
+clc; clearvars
 %% Load experiment file
 [file, path] = uigetfile('.mat','Select LED pattern data');
 
